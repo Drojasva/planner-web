@@ -1,0 +1,95 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Crear nueva tarea</title>
+</head>
+<body>
+  <h2>Formulario de Nueva Tarea</h2>
+  <form id="form-tarea">
+    <label>Título:</label><br>
+    <input type="text" name="titulo" required><br><br>
+
+    <label>Descripción:</label><br>
+    <textarea name="descripcion" rows="4" required></textarea><br><br>
+
+    <label>Área / Proceso:</label><br>
+    <select name="area">
+      <option value="Cocido">Cocido</option>
+      <option value="Crudo">Crudo</option>
+      <option value="Despacho">Despacho</option>
+      <option value="MPC">MPC</option>
+      <option value="Planta general">Planta general</option>
+    </select><br><br>
+
+    <label>Prioridad:</label><br>
+    <select name="prioridad">
+      <option value="Alta">Alta</option>
+      <option value="Media">Media</option>
+      <option value="Baja">Baja</option>
+    </select><br><br>
+
+    <label>Responsable:</label><br>
+    <input type="text" name="responsable" required><br><br>
+
+    <label>Correo del responsable:</label><br>
+    <input type="email" name="correo" required><br><br>
+
+    <label>Estado inicial:</label><br>
+    <select name="estado">
+      <option value="No iniciado">No iniciado</option>
+      <option value="En curso">En curso</option>
+      <option value="Completado">Completado</option>
+    </select><br><br>
+
+    <label>Fecha de inicio:</label><br>
+    <input type="date" name="fecha_inicio"><br><br>
+
+    <label>Fecha límite:</label><br>
+    <input type="date" name="fecha_limite"><br><br>
+
+    <label>Etiqueta:</label><br>
+    <select name="etiqueta">
+      <option value="OEE">OEE</option>
+      <option value="Reclamos">Reclamos</option>
+      <option value="Seguridad">Seguridad</option>
+      <option value="Cum. Programa">Cum. Programa</option>
+      <option value="Disponibilidad">Disponibilidad</option>
+    </select><br><br>
+
+    <label>¿Es periódica?</label>
+    <input type="checkbox" name="periodica"><br><br>
+
+    <button type="submit">Crear tarea</button>
+  </form>
+
+  <div id="mensaje"></div>
+
+  <script>
+    const form = document.getElementById('form-tarea');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const data = new FormData(form);
+      const obj = Object.fromEntries(data.entries());
+      obj.periodica = data.get('periodica') ? 'Sí' : 'No';
+
+      const respuesta = await fetch('https://script.google.com/macros/s/AKfycbwQBiLLtfP8Dx6hWpXTRb_k8s27i9C0NYmbMWTUgh8BpixNGOVfOlVNcoaLMxl4vaQYdg/exec', {
+        method: 'POST',
+        body: JSON.stringify(obj),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (respuesta.ok) {
+        document.getElementById('mensaje').innerText = '✅ Tarea creada exitosamente';
+        form.reset();
+      } else {
+        document.getElementById('mensaje').innerText = '❌ Error al crear la tarea';
+      }
+    });
+  </script>
+</body>
+</html>
